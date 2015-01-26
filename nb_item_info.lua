@@ -1,11 +1,13 @@
---Natural Balance Extended Item Info Viewer
+--Natural Balance Extended Viewscreens
+-- custom description repository :
+--https://github.com/Raidau/item_descriptions
 
 --When activated, this script adds additional lines of useful information to item view screen every time the item is inspected. This includes material info, weapon and attack properties, armor thickness and coverage. Also displays additional info related to NB mod.
 
 --Supports user-defined custom descriptions for items and materials. They are loaded from .txt files in raw/item_description folder. Instuction file is in item_description folder.
 
 --By Raidau for Natural Balance
---v 4.1 beta
+--v 4.2 beta
 
 local standard -- stores standard material to compare with
 local args = {...}
