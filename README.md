@@ -4,6 +4,7 @@ Last tested on DFhack 0.40.23 Windows
 
 #nb_item_info
 descriptions repository: https://github.com/Raidau/item_descriptions
+
 Lets you manually assign new spouses for your dwarves or remove existing romantic relationships (useful when the spouse is dead). Also shows pregnancy info.
 
 
