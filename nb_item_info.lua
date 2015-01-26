@@ -13,6 +13,34 @@ local standard -- stores standard material to compare with
 local args = {...}
 local dlg = require ("gui.dialogs")
 
+local help = [[
+Natural Balance Extended Viewscreens v 4.2 beta
+
+When activated, this script adds additional
+lines of useful information to 
+item view screen every time
+the item is inspected. This 
+includes material info, weapon
+and attack properties, armor thickness
+and coverage. Also displays additional
+info related to NB mod.
+
+Supports user-defined custom descriptions
+for items and materials. They are loaded
+from .txt files in raw/item_description folder.
+Instuction file is in item_description folder.
+
+Usage: 
+
+nb_item_info ?|help - show help, does not enable the script
+
+nb_item_info - enable the script
+	Additional arguments (in any order)
+	debug - prints file path for descriptions and ascii images
+	ascii_item - adds ascii image popup to item text viewer screen
+	ascii_unit - adds ascii image popup to unit text viewer screen
+	
+]]
 
 local debug
 local show_ascii
@@ -20,6 +48,12 @@ local show_ascii_item
 local show_ascii_unit
 
 for i = 1, #args do
+
+	if args[i] == "help" or args[i] == "?"
+		then print (help)
+		return
+	end
+
 	if args[i] == "debug"
 		then debug = true
 	end
