@@ -7,7 +7,7 @@
 --Supports user-defined custom descriptions for items and materials. They are loaded from .txt files in raw/item_description folder. Instuction file is in item_description folder.
 
 --By Raidau for Natural Balance
---v 4.2 beta
+--v 4.3 beta
 
 local standard -- stores standard material to compare with
 local args = {...}
@@ -681,7 +681,7 @@ function GetFoodPropertiesStringList (item)
 	if GetReactionProduct (mat, "SOAP_MAT") then
 		local mat_type, mat_index = GetReactionProduct (mat, "SOAP_MAT")
 		
-		table.insert(list,"Used to make soap"..dfhack.matinfo.decode(mat_type, mat_index).material.state_name.Liquid)	table.insert(indents,0)
+		table.insert(list,"Used to make "..dfhack.matinfo.decode(mat_type, mat_index).material.state_name.Liquid)	table.insert(indents,0)
 	end
 	
 	if item._type == df.item_plantst then
