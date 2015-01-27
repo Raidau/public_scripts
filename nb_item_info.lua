@@ -119,7 +119,6 @@ end
 
 function GetReactionClass (mat, rckey, strict) --returns reaction class string or nil if no match found
 
-	--print("checking rckey "..rckey.." for mat "..tostring(mat))
 	if not rckey then return nil end
 	
 	for k,v in pairs(mat.reaction_class) do
@@ -297,8 +296,6 @@ function GetStringListFromFile (item) -- processes all the custom desctipions
 		print (filename)
 	end
 	
-	--print ("material filename:")
-	--print (filename)
 	
 	if io.open(filename , r) then 
 
@@ -847,11 +844,8 @@ dfhack.onStateChange.item_info = function(code)
 		end
 		
 		if dfhack.gui.getCurViewscreen()._type == df.viewscreen_textviewerst and show_ascii then
-			--print ("cur frame",df.global.enabler.frame_last)
-			--print ("last frame",lastframe)
 			
 			if df.global.enabler.frame_last-lastframe > 1000 then
-				--print(tostring(unit))
 				local scr = dfhack.gui.getCurViewscreen()
 				local parent = scr.parent
 				
@@ -893,7 +887,6 @@ dfhack.onStateChange.item_info = function(code)
 						print (filename)
 					end
 					
-					--print (tostring (io.open(filename , r)))
 					
 					if io.open(filename , r) then
 						local inputfile = io.open(filename , r):read("*a")
