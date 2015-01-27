@@ -851,7 +851,7 @@ dfhack.onStateChange.item_info = function(code)
 			--print ("last frame",lastframe)
 			
 			if df.global.enabler.frame_last-lastframe > 1000 then
-				print(tostring(unit))
+				--print(tostring(unit))
 				local scr = dfhack.gui.getCurViewscreen()
 				local parent = scr.parent
 				
@@ -893,7 +893,7 @@ dfhack.onStateChange.item_info = function(code)
 						print (filename)
 					end
 					
-					print (tostring (io.open(filename , r)))
+					--print (tostring (io.open(filename , r)))
 					
 					if io.open(filename , r) then
 						local inputfile = io.open(filename , r):read("*a")
