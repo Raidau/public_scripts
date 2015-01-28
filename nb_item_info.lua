@@ -7,7 +7,7 @@
 --Supports user-defined custom descriptions for items and materials. They are loaded from .txt files in raw/item_description folder. Instuction file is in item_description folder.
 
 --By Raidau for Natural Balance
---v 4.3 beta
+--v 4.4 beta
 
 local standard -- stores standard material to compare with
 local args = {...}
@@ -71,6 +71,16 @@ end
 
 local lastframe = df.global.enabler.frame_last
 
+function MatchesAny (object, tab)
+	for k,v in pairs (tab) do
+		if object == v then return true end
+	end
+	
+	return false
+end
+
+local mats_shown_for = {0,1,4,3,5,43,44,56,57,75,24,67,85,64,26,27,59,28,29,25,38}
+
 function GetMainDir ()
 
 	local filename_root = ""
@@ -133,8 +143,6 @@ function GetReactionClass (mat, rckey, strict) --returns reaction class string o
 					return v.value
 				end
 			end
-			
-			
 			
 		else return nil
 		end
@@ -385,13 +393,10 @@ function GetMatPropertiesStringList (item)
 	local list = {}
 	local indents = {}
 	
-	table.insert(list,"Temperature: "..item.temperature.whole.."U") 	table.insert(indents,0)
+	table.insert(list,"Temperature: "..item.temperature.whole.."U".." ("..math.floor((item.temperature.whole-10000)*5/9).." C)") 	table.insert(indents,0)
 	
-	table.insert(list,"Material properties: ") 	table.insert(indents,0)
+	table.insert(list,"Color: "..df.global.world.raws.language.colors[mat.state_color.Solid].name) 	table.insert(indents,0)
 	
-	table.insert(list,"Color: "..df.global.world.raws.language.colors[mat.state_color.Solid].name) 	table.insert(indents,3)
-	
-	table.insert(list,"Solid density: "..mat.solid_density..'g/cm^3') 	table.insert(indents,3)
 	
 	local function GetStrainDescription (number)
 		local str = "unknown"
@@ -406,20 +411,28 @@ function GetMatPropertiesStringList (item)
 		
 	end
 	
-	table.insert(list,"Shear yield: "..mat.strength.yield.SHEAR.."("..math.floor(mat.strength.yield.SHEAR/standard.strength.yield.SHEAR*100).."%)"..
-	", fr.: "..mat.strength.fracture.SHEAR.."("..math.floor(mat.strength.fracture.SHEAR/standard.strength.fracture.SHEAR*100).."%)"..
-	", el.: "..mat.strength.strain_at_yield.SHEAR..GetStrainDescription(mat.strength.strain_at_yield.SHEAR)
-	) 	table.insert(indents,3)
+	if  MatchesAny (item:getType(),mats_shown_for) then
+		
+		table.insert(list,"Material properties: ") 	table.insert(indents,0)
 	
-	table.insert(list,"Impact yield: "..mat.strength.yield.IMPACT.."("..math.floor(mat.strength.yield.IMPACT/standard.strength.yield.IMPACT*100).."%)"..
-	", fr.: "..mat.strength.fracture.IMPACT.."("..math.floor(mat.strength.fracture.IMPACT/standard.strength.fracture.IMPACT*100).."%)"..
-	", el.: "..mat.strength.strain_at_yield.IMPACT..GetStrainDescription(mat.strength.strain_at_yield.IMPACT)
-	) 	table.insert(indents,3)
+		table.insert(list,"Solid density: "..mat.solid_density..'g/cm^3') 	table.insert(indents,3)
 	
-	if mat.molar_mass > 0 then
-		table.insert(list,"Molar mass: "..mat.molar_mass) 	table.insert(indents,3)
+		table.insert(list,"Shear yield: "..mat.strength.yield.SHEAR.."("..math.floor(mat.strength.yield.SHEAR/standard.strength.yield.SHEAR*100).."%)"..
+		", fr.: "..mat.strength.fracture.SHEAR.."("..math.floor(mat.strength.fracture.SHEAR/standard.strength.fracture.SHEAR*100).."%)"..
+		", el.: "..mat.strength.strain_at_yield.SHEAR..GetStrainDescription(mat.strength.strain_at_yield.SHEAR)
+		) 	table.insert(indents,3)
+		
+		table.insert(list,"Impact yield: "..mat.strength.yield.IMPACT.."("..math.floor(mat.strength.yield.IMPACT/standard.strength.yield.IMPACT*100).."%)"..
+		", fr.: "..mat.strength.fracture.IMPACT.."("..math.floor(mat.strength.fracture.IMPACT/standard.strength.fracture.IMPACT*100).."%)"..
+		", el.: "..mat.strength.strain_at_yield.IMPACT..GetStrainDescription(mat.strength.strain_at_yield.IMPACT)
+		) 	table.insert(indents,3)
+		
+		if mat.molar_mass > 0 then
+			table.insert(list,"Molar mass: "..mat.molar_mass) 	table.insert(indents,3)
+		end
+		table.insert(list,"Maximum sharpness: "..mat.strength.max_edge.." ("..mat.strength.max_edge/standard.strength.max_edge*100 .."%)") 	table.insert(indents,3)
+		
 	end
-	table.insert(list,"Maximum sharpness: "..mat.strength.max_edge.." ("..mat.strength.max_edge/standard.strength.max_edge*100 .."%)") 	table.insert(indents,3)
 	
 	table.insert(list," ") 	table.insert(indents,0)
 
