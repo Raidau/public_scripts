@@ -393,7 +393,7 @@ function GetMatPropertiesStringList (item)
 	local list = {}
 	local indents = {}
 	
-	table.insert(list,"Temperature: "..item.temperature.whole.."U".." ("..math.floor((item.temperature.whole-10000)*5/9).." C)") 	table.insert(indents,0)
+	table.insert(list,"Temperature: "..item.temperature.whole.."U".." ("..math.floor((item.temperature.whole-10000)*5/9).."\248C)") 	table.insert(indents,0)
 	
 	table.insert(list,"Color: "..df.global.world.raws.language.colors[mat.state_color.Solid].name) 	table.insert(indents,0)
 	
