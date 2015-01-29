@@ -7,11 +7,13 @@
 --Supports user-defined custom descriptions for items and materials. They are loaded from .txt files in raw/item_description folder. Instuction file is in item_description folder.
 
 --By Raidau for Natural Balance
---v 4.4 beta
+--v 5.0 beta
 
 local standard -- stores standard material to compare with
 local args = {...}
 local dlg = require ("gui.dialogs")
+local gui=require 'gui'
+local widgets=require 'gui.widgets'
 
 local help = [[
 Natural Balance Extended Viewscreens v 4.2 beta
@@ -80,6 +82,77 @@ function MatchesAny (object, tab)
 end
 
 local mats_shown_for = {0,1,4,3,5,43,44,56,57,75,24,67,85,64,26,27,59,28,29,25,38}
+
+function BuildCharMatrix (filename)
+
+		local char_matrix = {}
+		print ("reading file",filename)
+		local format_tag
+		
+		local input = io.open(filename , r):read("*a")
+		local format_tag = string.find (input,"NB_ASCII")
+		if not format_tag then print ("wrong image format") return nil end
+		
+		for line in io.open(filename , r):lines() do
+			print (line)
+			
+			local chartab = {}
+			for elem in string.gmatch(line, "%d+") do 
+				table.insert (chartab,tonumber(elem))
+				--print (#char_matrix,#chartab,elem)
+			end
+			
+			if #chartab>0 then
+				table.insert (char_matrix,chartab)
+			end
+			
+		 end
+		return char_matrix
+
+	end
+
+function ShowPicNBASCII(char_matrix)
+
+	if not char_matrix then return nil end
+	
+	local ascii_screen=defclass(tutorial_screen,gui.FramedScreen)
+
+	local draw_start_x,draw_start_y = 0,0
+	 
+	function ascii_screen:DrawLabels (char_matrix,start_t,start_l)
+
+		 for i =1, #char_matrix do
+			 for j =1, #char_matrix[i] do
+				self:addviews{	widgets.Label{text=string.char(char_matrix[i][j]),frame={t=start_t+i,l=start_l+j}} }
+			 end
+		 end
+
+	end
+
+	function ascii_screen:init(args)
+		self:addviews{
+			widgets.Label{text="Hello World",frame={t=1,l=1}},
+			widgets.Label{
+				frame = { l = 0, b = 0, w = 10 },
+				text = {
+					{ key = 'LEAVESCREEN', text = ': Close',
+					  on_activate = self:callback('dismiss') },
+					  }
+			},
+		}
+		
+		self:DrawLabels (char_matrix,draw_start_x,draw_start_y)
+		
+	end
+	
+	ascii_screen{
+	frame_width	= 40,
+	frame_height = 20,
+	frame_title = "ASCII View",
+	frame_style = gui.GREY_LINE_FRAME
+	}:show()
+
+end
 
 function GetMainDir ()
 
@@ -735,6 +808,21 @@ function AddUsesString (viewscreen,inp_string,indent,reaction)
 	viewscreen.entry_reaction:insert('#', reaction)
 end
 	
+function ProcessASCII (filename)
+	
+	if io.open(filename , r) then
+		local char_matrix =	BuildCharMatrix (filename) 
+	 
+		if char_matrix then
+			ShowPicNBASCII(char_matrix)
+			else
+			local inputfile = io.open(filename , r):read("*a")
+			dlg.showMessage("ASCII View",inputfile, COLOR_WHITE, nil)
+		end
+		
+	end
+end
+	
 dfhack.onStateChange.item_info = function(code)
 	if code == SC_VIEWSCREEN_CHANGED and dfhack.isWorldLoaded() then
 	
@@ -873,11 +961,8 @@ dfhack.onStateChange.item_info = function(code)
 						print (filename)
 					end
 					
-					if io.open(filename , r) then
-						local inputfile = io.open(filename , r):read("*a")
-						dlg.showMessage("ASCII View",inputfile, COLOR_WHITE, nil)
-					end
-				
+					ProcessASCII (filename)
+
 					lastframe = df.global.enabler.frame_last
 				
 				end
@@ -900,11 +985,7 @@ dfhack.onStateChange.item_info = function(code)
 						print (filename)
 					end
 					
-					
-					if io.open(filename , r) then
-						local inputfile = io.open(filename , r):read("*a")
-						dlg.showMessage("ASCII View",inputfile, COLOR_WHITE, nil)
-					end
+					ProcessASCII (filename)
 				
 					lastframe = df.global.enabler.frame_last
 				
