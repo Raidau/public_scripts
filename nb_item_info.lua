@@ -7,7 +7,7 @@
 --Supports user-defined custom descriptions for items and materials. They are loaded from .txt files in raw/item_description folder. Instuction file is in item_description folder.
 
 --By Raidau for Natural Balance
---v 5.0 beta
+--v 5.1 beta
 
 local standard -- stores standard material to compare with
 local args = {...}
@@ -16,7 +16,7 @@ local gui=require 'gui'
 local widgets=require 'gui.widgets'
 
 local help = [[
-Natural Balance Extended Viewscreens v 4.2 beta
+Natural Balance Extended Viewscreens v 5.1 beta
 
 When activated, this script adds additional
 lines of useful information to 
@@ -86,15 +86,18 @@ local mats_shown_for = {0,1,4,3,5,43,44,56,57,75,24,67,85,64,26,27,59,28,29,25,3
 function BuildCharMatrix (filename)
 
 		local char_matrix = {}
-		print ("reading file",filename)
+		--print ("reading file",filename)
 		local format_tag
 		
 		local input = io.open(filename , r):read("*a")
-		local format_tag = string.find (input,"NB_ASCII")
-		if not format_tag then print ("wrong image format") return nil end
+		local format_tag = string.match (input,"<FORMAT:(.+)>")
+		
+		if  format_tag ~= "NB_ASCII" then return nil end
+		
+		--print ("wrong image format") 
 		
 		for line in io.open(filename , r):lines() do
-			print (line)
+			--print (line)
 			
 			local chartab = {}
 			for elem in string.gmatch(line, "%d+") do 
@@ -107,8 +110,18 @@ function BuildCharMatrix (filename)
 			end
 			
 		 end
+		  
 		return char_matrix
-
+		
+	--[[	local ascii_image = "" -- convert chars into a single string, but it does not allow different colors
+		 for i =1, #char_matrix do
+			 for j =1, #char_matrix[i] do
+				ascii_image = ascii_image..string.char(char_matrix[i][j])
+			 end
+			 if char_matrix[i+1] then ascii_image = ascii_image.."\n" end
+		 end
+		print ascii_image]]
+		
 	end
 
 function ShowPicNBASCII(char_matrix)
@@ -146,8 +159,8 @@ function ShowPicNBASCII(char_matrix)
 	end
 	
 	ascii_screen{
-	frame_width	= 40,
-	frame_height = 20,
+	frame_width	= #char_matrix[1]+1,
+	frame_height = #char_matrix+2,
 	frame_title = "ASCII View",
 	frame_style = gui.GREY_LINE_FRAME
 	}:show()
@@ -323,8 +336,10 @@ function GetStringListFromFile (item) -- processes all the custom desctipions
 	------------------------------------------------------
 	
 	local matinfo = dfhack.matinfo.decode(item)
-	if not matinfo then print ("nb_item_info: matinfo not found item#"..item.id) table.insert(list," ") 	table.insert(indents,0) return list,indents end
+	if not matinfo then  table.insert(list," ")	table.insert(indents,0) return list,indents end
 	
+--	print ("nb_item_info: matinfo not found item#"..item.id)
+
 	filename = filename_root..[[Material/]]
 	
 	local custom_filename = GetReactionClass(matinfo.material,"CUSTOM_DESCR=") or ""
