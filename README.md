@@ -1,6 +1,6 @@
 # DFhack scripts by Raidau
 
-Last tested on DFhack 0.40.23 Windows
+Last tested on DFhack 0.40.24r1 Windows
 
 #nb_item_info
 Descriptions repository: https://github.com/Raidau/item_descriptions
